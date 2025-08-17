@@ -359,15 +359,17 @@ class MainActivity : AppCompatActivity() {
     private fun showMessage(message: String) {
         tvMessage.text = message
         
-        // Create custom toast
+        // Create custom toast with modern approach
         val inflater = layoutInflater
         val layout = inflater.inflate(R.layout.custom_toast, null)
         val toastText = layout.findViewById<TextView>(R.id.toast_text)
         toastText.text = message
         
-        val toast = Toast(applicationContext)
-        toast.duration = Toast.LENGTH_SHORT
-        toast.view = layout
+        @Suppress("DEPRECATION")
+        val toast = Toast(applicationContext).apply {
+            duration = Toast.LENGTH_SHORT
+            view = layout
+        }
         toast.show()
     }
     

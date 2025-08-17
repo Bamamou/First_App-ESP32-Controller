@@ -36,7 +36,7 @@ class BluetoothDeviceAdapter(private val context: Context) : BaseAdapter() {
     
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view = convertView ?: LayoutInflater.from(context).inflate(
-            android.R.layout.simple_list_item_2, parent, false
+            R.layout.device_list_item, parent, false
         )
         
         val device = devices[position]

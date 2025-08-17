@@ -2,8 +2,34 @@
 <resources>
     <style name="Theme.Testing" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">#2196F3</item>
-        <item name="colorPrimaryDark">#1976D2</item>
-        <item name="colorAccent">#4CAF50</item>
+        <item name="colorPrimary">@color/primary_blue</item>
+        <item name="colorPrimaryDark">@color/primary_blue_dark</item>
+        <item name="colorAccent">@color/accent_green</item>
+        
+        <!-- Background colors -->
+        <item name="android:windowBackground">@color/background_primary</item>
+        <item name="android:colorBackground">@color/background_primary</item>
+        
+        <!-- Text colors -->
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        
+        <!-- Action Bar -->
+        <item name="actionBarStyle">@style/CustomActionBar</item>
+        
+        <!-- Status Bar -->
+        <item name="android:statusBarColor">@color/primary_blue_dark</item>
+    </style>
+    
+    <style name="CustomActionBar" parent="Widget.AppCompat.ActionBar">
+        <item name="background">@color/primary_blue</item>
+        <item name="titleTextStyle">@style/ActionBarTitle</item>
+        <item name="elevation">4dp</item>
+    </style>
+    
+    <style name="ActionBarTitle" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/text_white</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 </resources>

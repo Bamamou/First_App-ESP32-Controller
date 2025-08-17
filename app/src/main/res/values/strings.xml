@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Bluetooth ESP32 Controller</string>
+    <string name="app_name">ESP32 Controller</string>
     <string name="status_disconnected">Status: Disconnected</string>
     <string name="status_connected">Status: Connected</string>
     <string name="status_connecting">Status: Connecting…</string>
@@ -32,4 +32,9 @@
     <string name="sent_command">Sent: %1$s</string>
     <string name="failed_to_send_command">Failed to send command</string>
     <string name="unknown_device">Unknown Device</string>
+    <string name="device_discovery">Device Discovery</string>
+    <string name="relay_control">Relay Control</string>
+    <string name="turn_on_relay">Turn On Relay</string>
+    <string name="turn_off_relay">Turn Off Relay</string>
+    <string name="status_messages">Status Messages</string>
 </resources>

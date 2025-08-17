@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnOn: Button
     private lateinit var btnOff: Button
     private lateinit var listViewDevices: ListView
+    private lateinit var statusIndicator: android.view.View
     
     private var bluetoothAdapter: BluetoothAdapter? = null
     private var bluetoothSocket: BluetoothSocket? = null
@@ -81,10 +82,12 @@ class MainActivity : AppCompatActivity() {
         btnOn = findViewById(R.id.btnOn)
         btnOff = findViewById(R.id.btnOff)
         listViewDevices = findViewById(R.id.listViewDevices)
+        statusIndicator = findViewById(R.id.statusIndicator)
     }
     
     private fun setupClickListeners() {
         btnScan.setOnClickListener {
+            animateButtonPress(btnScan)
             if (bluetoothAdapter?.isDiscovering == true) {
                 bluetoothAdapter?.cancelDiscovery()
                 btnScan.text = getString(R.string.scan_for_devices)
@@ -95,6 +98,7 @@ class MainActivity : AppCompatActivity() {
         }
         
         btnConnect.setOnClickListener {
+            animateButtonPress(btnConnect)
             if (bluetoothSocket?.isConnected == true) {
                 disconnectFromDevice()
             } else {
@@ -103,10 +107,12 @@ class MainActivity : AppCompatActivity() {
         }
         
         btnOn.setOnClickListener {
+            animateButtonPress(btnOn)
             sendCommand("ON")
         }
         
         btnOff.setOnClickListener {
+            animateButtonPress(btnOff)
             sendCommand("OFF")
         }
     }
@@ -177,8 +183,17 @@ class MainActivity : AppCompatActivity() {
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             deviceAdapter.addDevice(device)
-            tvDevicesLabel.visibility = android.view.View.VISIBLE
-            listViewDevices.visibility = android.view.View.VISIBLE
+            
+            // Show device list with animation if it's the first device
+            if (tvDevicesLabel.visibility == android.view.View.GONE) {
+                tvDevicesLabel.visibility = android.view.View.VISIBLE
+                listViewDevices.visibility = android.view.View.VISIBLE
+                
+                val fadeInAnimation = android.view.animation.AnimationUtils.loadAnimation(this, R.anim.fade_in_up)
+                tvDevicesLabel.startAnimation(fadeInAnimation)
+                listViewDevices.startAnimation(fadeInAnimation)
+            }
+            
             showMessage(getString(R.string.found_device, device.name ?: getString(R.string.unknown_device)))
         }
     }
@@ -212,6 +227,10 @@ class MainActivity : AppCompatActivity() {
             if (pairedDevices?.isNotEmpty() == true) {
                 tvDevicesLabel.visibility = android.view.View.VISIBLE
                 listViewDevices.visibility = android.view.View.VISIBLE
+                
+                val fadeInAnimation = android.view.animation.AnimationUtils.loadAnimation(this, R.anim.fade_in_up)
+                tvDevicesLabel.startAnimation(fadeInAnimation)
+                listViewDevices.startAnimation(fadeInAnimation)
             }
         }
         
@@ -312,12 +331,25 @@ class MainActivity : AppCompatActivity() {
     
     private fun updateConnectionStatus(status: String, connected: Boolean) {
         tvConnectionStatus.text = status
-        tvConnectionStatus.setTextColor(
-            if (connected) 
-                ContextCompat.getColor(this, android.R.color.holo_green_dark)
-            else 
-                ContextCompat.getColor(this, android.R.color.holo_red_dark)
-        )
+        
+        // Update status indicator and colors
+        val (textColor, indicatorDrawable) = when {
+            status.contains("Connected") -> {
+                Pair(ContextCompat.getColor(this, R.color.status_connected),
+                     ContextCompat.getDrawable(this, R.drawable.status_indicator_connected))
+            }
+            status.contains("Connecting") -> {
+                Pair(ContextCompat.getColor(this, R.color.status_connecting),
+                     ContextCompat.getDrawable(this, R.drawable.status_indicator_connected))
+            }
+            else -> {
+                Pair(ContextCompat.getColor(this, R.color.status_disconnected),
+                     ContextCompat.getDrawable(this, R.drawable.status_indicator_disconnected))
+            }
+        }
+        
+        tvConnectionStatus.setTextColor(textColor)
+        statusIndicator.background = indicatorDrawable
         
         btnOn.isEnabled = connected
         btnOff.isEnabled = connected
@@ -326,7 +358,22 @@ class MainActivity : AppCompatActivity() {
     
     private fun showMessage(message: String) {
         tvMessage.text = message
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        
+        // Create custom toast
+        val inflater = layoutInflater
+        val layout = inflater.inflate(R.layout.custom_toast, null)
+        val toastText = layout.findViewById<TextView>(R.id.toast_text)
+        toastText.text = message
+        
+        val toast = Toast(applicationContext)
+        toast.duration = Toast.LENGTH_SHORT
+        toast.view = layout
+        toast.show()
+    }
+    
+    private fun animateButtonPress(button: android.view.View) {
+        val animation = android.view.animation.AnimationUtils.loadAnimation(this, R.anim.button_press)
+        button.startAnimation(animation)
     }
     
     override fun onDestroy() {

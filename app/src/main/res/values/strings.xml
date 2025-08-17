@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">Bluetooth ESP32 Controller</string>
+    <string name="status_disconnected">Status: Disconnected</string>
+    <string name="status_connected">Status: Connected</string>
+    <string name="status_connecting">Status: Connecting…</string>
+    <string name="status_connection_failed">Status: Connection Failed</string>
+    <string name="scan_for_devices">Scan for Devices</string>
+    <string name="stop_scan">Stop Scan</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="connect_to_device">Connect to %1$s</string>
+    <string name="relay_on">ON</string>
+    <string name="relay_off">OFF</string>
+    <string name="available_devices">Available Devices:</string>
+    <string name="click_scan_to_find">Click Scan to find devices</string>
+    <string name="bluetooth_not_supported">Bluetooth not supported on this device</string>
+    <string name="bluetooth_enabled">Bluetooth enabled</string>
+    <string name="bluetooth_required">Bluetooth is required for this app</string>
+    <string name="permissions_granted">Permissions granted</string>
+    <string name="permissions_required">Permissions required for Bluetooth functionality</string>
+    <string name="bluetooth_scan_permission_required">Bluetooth scan permission required</string>
+    <string name="bluetooth_connect_permission_required">Bluetooth connect permission required</string>
+    <string name="scanning_for_devices">Scanning for devices…</string>
+    <string name="scan_completed">Scan completed</string>
+    <string name="found_device">Found device: %1$s</string>
+    <string name="selected_device">Selected: %1$s (%2$s)</string>
+    <string name="connecting">Connecting…</string>
+    <string name="connected_to_device">Connected to %1$s</string>
+    <string name="failed_to_connect">Failed to connect: %1$s</string>
+    <string name="disconnected_from_device">Disconnected from device</string>
+    <string name="not_connected_to_device">Not connected to any device</string>
+    <string name="sent_command">Sent: %1$s</string>
+    <string name="failed_to_send_command">Failed to send command</string>
+    <string name="unknown_device">Unknown Device</string>
+</resources>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tvConnectionStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/status_disconnected"
+        android:textSize="18sp"
+        android:textColor="#FF5722"
+        android:layout_marginBottom="16dp"
+        android:layout_gravity="center" />
+
+    <Button
+        android:id="@+id/btnScan"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="@string/scan_for_devices"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="#9C27B0"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/available_devices"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone"
+        android:id="@+id/tvDevicesLabel" />
+
+    <ListView
+        android:id="@+id/listViewDevices"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginBottom="16dp"
+        android:background="#F5F5F5"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btnConnect"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="@string/connect"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="#2196F3"
+        android:layout_gravity="center"
+        android:enabled="false" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/btnOn"
+            android:layout_width="120dp"
+            android:layout_height="80dp"
+            android:text="@string/relay_on"
+            android:textSize="18sp"
+            android:backgroundTint="#4CAF50"
+            android:layout_marginEnd="16dp"
+            android:enabled="false" />
+
+        <Button
+            android:id="@+id/btnOff"
+            android:layout_width="120dp"
+            android:layout_height="80dp"
+            android:text="@string/relay_off"
+            android:textSize="18sp"
+            android:backgroundTint="#F44336"
+            android:enabled="false" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/click_scan_to_find"
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:layout_gravity="center" />
+
+</LinearLayout>

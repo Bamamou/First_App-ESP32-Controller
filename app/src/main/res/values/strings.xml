@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ESP32 Controller</string>
+    <string name="app_name">Smart Home Controller</string>
     <string name="status_disconnected">Status: Disconnected</string>
     <string name="status_connected">Status: Connected</string>
     <string name="status_connecting">Status: Connecting…</string>
@@ -37,4 +37,12 @@
     <string name="turn_on_relay">Turn On Relay</string>
     <string name="turn_off_relay">Turn Off Relay</string>
     <string name="status_messages">Status Messages</string>
+    
+    <!-- App descriptions for Play Store -->
+    <string name="app_description">Smart Home Controller for ESP32 - Control your home automation devices via Bluetooth</string>
+    <string name="app_short_description">Control ESP32 smart home devices wirelessly via Bluetooth</string>
+    
+    <!-- Permission explanations -->
+    <string name="bluetooth_permission_rationale">Bluetooth access is required to connect and control your ESP32 smart home devices</string>
+    <string name="location_permission_rationale">Location access is required for Bluetooth device discovery on Android 6.0+</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.testing
+package com.smarthome.esp32controller
 
 import android.bluetooth.BluetoothDevice
 import android.content.Context

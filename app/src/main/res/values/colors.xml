@@ -29,6 +29,7 @@
     <color name="status_connected">#4CAF50</color>
     <color name="status_disconnected">#F44336</color>
     <color name="status_connecting">#FF9800</color>
+    <color name="success_green">#4CAF50</color>
     
     <!-- Surface Colors -->
     <color name="surface_light">#FAFAFA</color>

@@ -25,7 +25,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/app_name"
+                android:text="Smart Home Controller"
                 android:textColor="@color/text_primary"
                 android:textSize="28sp"
                 android:textStyle="bold"
@@ -120,21 +120,93 @@
                 android:layout_marginBottom="12dp"
                 android:visibility="gone" />
 
-            <!-- Scrollable device list with maximum height -->
-            <ListView
-                android:id="@+id/listViewDevices"
+            <!-- Modern device scanning section -->
+            <LinearLayout
+                android:id="@+id/layoutDeviceSection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxHeight="250dp"
-                android:background="@drawable/device_list_background"
-                android:divider="@color/surface_medium"
-                android:dividerHeight="1dp"
-                android:padding="8dp"
-                android:layout_marginBottom="16dp"
+                android:orientation="vertical"
                 android:visibility="gone"
-                android:scrollbars="vertical"
-                android:fadeScrollbars="false"
-                android:nestedScrollingEnabled="true" />
+                android:layout_marginBottom="16dp">
+
+                <!-- Scanning progress indicator -->
+                <LinearLayout
+                    android:id="@+id/layoutScanningProgress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:padding="16dp"
+                    android:background="@drawable/scanning_background"
+                    android:layout_marginBottom="12dp"
+                    android:visibility="gone">
+
+                    <ProgressBar
+                        android:id="@+id/progressScanning"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="12dp"
+                        android:indeterminateTint="@color/primary_blue" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Scanning for devices..."
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <!-- Professional RecyclerView for devices -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewDevices"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxHeight="300dp"
+                    android:nestedScrollingEnabled="true"
+                    android:scrollbars="vertical"
+                    android:fadeScrollbars="false"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- Empty state message -->
+                <LinearLayout
+                    android:id="@+id/layoutEmptyState"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/empty_state_background"
+                    android:padding="24dp"
+                    android:visibility="visible">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📱"
+                        android:textSize="32sp"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No devices found"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tap scan to discover ESP32 devices"
+                        android:textColor="@color/text_hint"
+                        android:textSize="12sp"
+                        android:gravity="center" />
+
+                </LinearLayout>
+
+            </LinearLayout>
 
             <Button
                 android:id="@+id/btnConnect"
@@ -150,7 +222,7 @@
 
         </LinearLayout>
 
-        <!-- Control Panel Section -->
+        <!-- Smart Home Control Panel -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -163,77 +235,307 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Relay Control"
+                android:text="🏠 Smart Home Control"
                 android:textColor="@color/text_primary"
-                android:textSize="20sp"
+                android:textSize="22sp"
                 android:textStyle="bold"
                 android:gravity="center"
                 android:layout_marginBottom="24dp" />
 
+            <!-- First Row: Bedroom & Living Room -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center"
+                android:layout_marginBottom="20dp"
                 android:weightSum="2">
 
+                <!-- Bedroom Control -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:gravity="center"
-                    android:layout_marginEnd="12dp">
-
-                    <Button
-                        android:id="@+id/btnOn"
-                        android:layout_width="120dp"
-                        android:layout_height="120dp"
-                        android:background="@drawable/button_success"
-                        android:text="@string/relay_on"
-                        android:textColor="@color/text_white"
-                        android:textSize="24sp"
-                        android:textStyle="bold"
-                        android:enabled="false"
-                        android:elevation="6dp"
-                        android:layout_marginBottom="8dp" />
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/room_card_background"
+                    android:padding="16dp"
+                    android:elevation="2dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Turn On Relay"
+                        android:text="🛏️ Bedroom"
+                        android:textColor="@color/text_primary"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:weightSum="2">
+
+                        <Button
+                            android:id="@+id/btnBedroomOn"
+                            android:layout_width="0dp"
+                            android:layout_height="60dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/button_success"
+                            android:text="ON"
+                            android:textColor="@color/text_white"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:enabled="false"
+                            android:elevation="3dp"
+                            android:layout_marginEnd="4dp" />
+
+                        <Button
+                            android:id="@+id/btnBedroomOff"
+                            android:layout_width="0dp"
+                            android:layout_height="60dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/button_danger"
+                            android:text="OFF"
+                            android:textColor="@color/text_white"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:enabled="false"
+                            android:elevation="3dp"
+                            android:layout_marginStart="4dp" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvBedroomStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="OFF"
                         android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="8dp" />
 
                 </LinearLayout>
 
+                <!-- Living Room Control -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:gravity="center"
-                    android:layout_marginStart="12dp">
-
-                    <Button
-                        android:id="@+id/btnOff"
-                        android:layout_width="120dp"
-                        android:layout_height="120dp"
-                        android:background="@drawable/button_danger"
-                        android:text="@string/relay_off"
-                        android:textColor="@color/text_white"
-                        android:textSize="24sp"
-                        android:textStyle="bold"
-                        android:enabled="false"
-                        android:elevation="6dp"
-                        android:layout_marginBottom="8dp" />
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/room_card_background"
+                    android:padding="16dp"
+                    android:elevation="2dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Turn Off Relay"
+                        android:text="🛋️ Living Room"
+                        android:textColor="@color/text_primary"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:weightSum="2">
+
+                        <Button
+                            android:id="@+id/btnLivingRoomOn"
+                            android:layout_width="0dp"
+                            android:layout_height="60dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/button_success"
+                            android:text="ON"
+                            android:textColor="@color/text_white"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:enabled="false"
+                            android:elevation="3dp"
+                            android:layout_marginEnd="4dp" />
+
+                        <Button
+                            android:id="@+id/btnLivingRoomOff"
+                            android:layout_width="0dp"
+                            android:layout_height="60dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/button_danger"
+                            android:text="OFF"
+                            android:textColor="@color/text_white"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:enabled="false"
+                            android:elevation="3dp"
+                            android:layout_marginStart="4dp" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvLivingRoomStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="OFF"
                         android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="8dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Second Row: Bathroom & Kitchen -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <!-- Bathroom Control -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/room_card_background"
+                    android:padding="16dp"
+                    android:elevation="2dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🚿 Bathroom"
+                        android:textColor="@color/text_primary"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:weightSum="2">
+
+                        <Button
+                            android:id="@+id/btnBathroomOn"
+                            android:layout_width="0dp"
+                            android:layout_height="60dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/button_success"
+                            android:text="ON"
+                            android:textColor="@color/text_white"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:enabled="false"
+                            android:elevation="3dp"
+                            android:layout_marginEnd="4dp" />
+
+                        <Button
+                            android:id="@+id/btnBathroomOff"
+                            android:layout_width="0dp"
+                            android:layout_height="60dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/button_danger"
+                            android:text="OFF"
+                            android:textColor="@color/text_white"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:enabled="false"
+                            android:elevation="3dp"
+                            android:layout_marginStart="4dp" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvBathroomStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="OFF"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="8dp" />
+
+                </LinearLayout>
+
+                <!-- Kitchen Control -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/room_card_background"
+                    android:padding="16dp"
+                    android:elevation="2dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🍳 Kitchen"
+                        android:textColor="@color/text_primary"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:weightSum="2">
+
+                        <Button
+                            android:id="@+id/btnKitchenOn"
+                            android:layout_width="0dp"
+                            android:layout_height="60dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/button_success"
+                            android:text="ON"
+                            android:textColor="@color/text_white"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:enabled="false"
+                            android:elevation="3dp"
+                            android:layout_marginEnd="4dp" />
+
+                        <Button
+                            android:id="@+id/btnKitchenOff"
+                            android:layout_width="0dp"
+                            android:layout_height="60dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/button_danger"
+                            android:text="OFF"
+                            android:textColor="@color/text_white"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:enabled="false"
+                            android:elevation="3dp"
+                            android:layout_marginStart="4dp" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvKitchenStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="OFF"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="8dp" />
 
                 </LinearLayout>
 

@@ -1,4 +1,4 @@
-package com.example.testing
+package com.smarthome.esp32controller
 
 import android.Manifest
 import android.bluetooth.BluetoothAdapter
@@ -21,6 +21,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import java.io.IOException
 import java.io.OutputStream
 import java.util.*
@@ -32,17 +34,34 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvDevicesLabel: TextView
     private lateinit var btnScan: Button
     private lateinit var btnConnect: Button
-    private lateinit var btnOn: Button
-    private lateinit var btnOff: Button
-    private lateinit var listViewDevices: ListView
+    private lateinit var recyclerViewDevices: RecyclerView
+    private lateinit var layoutDeviceSection: android.view.ViewGroup
+    private lateinit var layoutScanningProgress: android.view.ViewGroup
+    private lateinit var layoutEmptyState: android.view.ViewGroup
     private lateinit var statusIndicator: android.view.View
+    
+    // Room control buttons
+    private lateinit var btnBedroomOn: Button
+    private lateinit var btnBedroomOff: Button
+    private lateinit var btnLivingRoomOn: Button
+    private lateinit var btnLivingRoomOff: Button
+    private lateinit var btnBathroomOn: Button
+    private lateinit var btnBathroomOff: Button
+    private lateinit var btnKitchenOn: Button
+    private lateinit var btnKitchenOff: Button
+
+    // Room status indicators
+    private lateinit var tvBedroomStatus: TextView
+    private lateinit var tvLivingRoomStatus: TextView
+    private lateinit var tvBathroomStatus: TextView
+    private lateinit var tvKitchenStatus: TextView
     
     private var bluetoothAdapter: BluetoothAdapter? = null
     private var bluetoothSocket: BluetoothSocket? = null
     private var outputStream: OutputStream? = null
     private var selectedDevice: BluetoothDevice? = null
     
-    private lateinit var deviceAdapter: BluetoothDeviceAdapter
+    private lateinit var deviceAdapter: ModernBluetoothDeviceAdapter
     
     // Activity result launcher for enabling Bluetooth
     private val enableBluetoothLauncher = registerForActivityResult(
@@ -79,10 +98,27 @@ class MainActivity : AppCompatActivity() {
         tvDevicesLabel = findViewById(R.id.tvDevicesLabel)
         btnScan = findViewById(R.id.btnScan)
         btnConnect = findViewById(R.id.btnConnect)
-        btnOn = findViewById(R.id.btnOn)
-        btnOff = findViewById(R.id.btnOff)
-        listViewDevices = findViewById(R.id.listViewDevices)
+        recyclerViewDevices = findViewById(R.id.recyclerViewDevices)
+        layoutDeviceSection = findViewById(R.id.layoutDeviceSection)
+        layoutScanningProgress = findViewById(R.id.layoutScanningProgress)
+        layoutEmptyState = findViewById(R.id.layoutEmptyState)
         statusIndicator = findViewById(R.id.statusIndicator)
+        
+        // Initialize room controls
+        btnBedroomOn = findViewById(R.id.btnBedroomOn)
+        btnBedroomOff = findViewById(R.id.btnBedroomOff)
+        btnLivingRoomOn = findViewById(R.id.btnLivingRoomOn)
+        btnLivingRoomOff = findViewById(R.id.btnLivingRoomOff)
+        btnBathroomOn = findViewById(R.id.btnBathroomOn)
+        btnBathroomOff = findViewById(R.id.btnBathroomOff)
+        btnKitchenOn = findViewById(R.id.btnKitchenOn)
+        btnKitchenOff = findViewById(R.id.btnKitchenOff)
+
+        // Initialize status indicators
+        tvBedroomStatus = findViewById(R.id.tvBedroomStatus)
+        tvLivingRoomStatus = findViewById(R.id.tvLivingRoomStatus)
+        tvBathroomStatus = findViewById(R.id.tvBathroomStatus)
+        tvKitchenStatus = findViewById(R.id.tvKitchenStatus)
     }
     
     private fun setupClickListeners() {
@@ -91,6 +127,13 @@ class MainActivity : AppCompatActivity() {
             if (bluetoothAdapter?.isDiscovering == true) {
                 bluetoothAdapter?.cancelDiscovery()
                 btnScan.text = getString(R.string.scan_for_devices)
+                layoutScanningProgress.visibility = android.view.View.GONE
+                
+                // Show empty state if no devices found
+                if (deviceAdapter.getDeviceCount() == 0) {
+                    layoutEmptyState.visibility = android.view.View.VISIBLE
+                }
+                
                 showMessage(getString(R.string.scan_completed))
             } else {
                 startDeviceScan()
@@ -106,26 +149,64 @@ class MainActivity : AppCompatActivity() {
             }
         }
         
-        btnOn.setOnClickListener {
-            animateButtonPress(btnOn)
-            sendCommand("ON")
+        // Room control listeners
+        btnBedroomOn.setOnClickListener { 
+            animateButtonPress(btnBedroomOn)
+            sendCommand("BEDROOM_ON")
+            updateRoomStatus("bedroom", true)
         }
-        
-        btnOff.setOnClickListener {
-            animateButtonPress(btnOff)
-            sendCommand("OFF")
+        btnBedroomOff.setOnClickListener { 
+            animateButtonPress(btnBedroomOff)
+            sendCommand("BEDROOM_OFF")
+            updateRoomStatus("bedroom", false)
+        }
+
+        btnLivingRoomOn.setOnClickListener { 
+            animateButtonPress(btnLivingRoomOn)
+            sendCommand("LIVINGROOM_ON")
+            updateRoomStatus("livingroom", true)
+        }
+        btnLivingRoomOff.setOnClickListener { 
+            animateButtonPress(btnLivingRoomOff)
+            sendCommand("LIVINGROOM_OFF")
+            updateRoomStatus("livingroom", false)
+        }
+
+        btnBathroomOn.setOnClickListener { 
+            animateButtonPress(btnBathroomOn)
+            sendCommand("BATHROOM_ON")
+            updateRoomStatus("bathroom", true)
+        }
+        btnBathroomOff.setOnClickListener { 
+            animateButtonPress(btnBathroomOff)
+            sendCommand("BATHROOM_OFF")
+            updateRoomStatus("bathroom", false)
+        }
+
+        btnKitchenOn.setOnClickListener { 
+            animateButtonPress(btnKitchenOn)
+            sendCommand("KITCHEN_ON")
+            updateRoomStatus("kitchen", true)
+        }
+        btnKitchenOff.setOnClickListener { 
+            animateButtonPress(btnKitchenOff)
+            sendCommand("KITCHEN_OFF")
+            updateRoomStatus("kitchen", false)
         }
     }
     
     private fun setupDeviceList() {
-        deviceAdapter = BluetoothDeviceAdapter(this)
-        listViewDevices.adapter = deviceAdapter
-        
-        listViewDevices.setOnItemClickListener { _, _, position, _ ->
-            selectedDevice = deviceAdapter.getDevice(position)
+        deviceAdapter = ModernBluetoothDeviceAdapter { device ->
+            selectedDevice = device
             btnConnect.isEnabled = true
-            btnConnect.text = getString(R.string.connect_to_device, selectedDevice?.name ?: getString(R.string.unknown_device))
-            showMessage(getString(R.string.selected_device, selectedDevice?.name ?: getString(R.string.unknown_device), selectedDevice?.address))
+            btnConnect.text = getString(R.string.connect_to_device, device.name ?: getString(R.string.unknown_device))
+            showMessage(getString(R.string.selected_device, device.name ?: getString(R.string.unknown_device), device.address))
+        }
+        
+        recyclerViewDevices.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = deviceAdapter
+            setHasFixedSize(true)
         }
     }
     
@@ -187,11 +268,12 @@ class MainActivity : AppCompatActivity() {
             // Show device list with animation if it's the first device
             if (tvDevicesLabel.visibility == android.view.View.GONE) {
                 tvDevicesLabel.visibility = android.view.View.VISIBLE
-                listViewDevices.visibility = android.view.View.VISIBLE
+                layoutDeviceSection.visibility = android.view.View.VISIBLE
+                layoutEmptyState.visibility = android.view.View.GONE
                 
                 val fadeInAnimation = android.view.animation.AnimationUtils.loadAnimation(this, R.anim.fade_in_up)
                 tvDevicesLabel.startAnimation(fadeInAnimation)
-                listViewDevices.startAnimation(fadeInAnimation)
+                layoutDeviceSection.startAnimation(fadeInAnimation)
             }
             
             showMessage(getString(R.string.found_device, device.name ?: getString(R.string.unknown_device)))
@@ -226,17 +308,23 @@ class MainActivity : AppCompatActivity() {
             
             if (pairedDevices?.isNotEmpty() == true) {
                 tvDevicesLabel.visibility = android.view.View.VISIBLE
-                listViewDevices.visibility = android.view.View.VISIBLE
+                layoutDeviceSection.visibility = android.view.View.VISIBLE
+                layoutEmptyState.visibility = android.view.View.GONE
                 
                 val fadeInAnimation = android.view.animation.AnimationUtils.loadAnimation(this, R.anim.fade_in_up)
                 tvDevicesLabel.startAnimation(fadeInAnimation)
-                listViewDevices.startAnimation(fadeInAnimation)
+                layoutDeviceSection.startAnimation(fadeInAnimation)
             }
         }
         
         // Start discovery for new devices
         bluetoothAdapter?.startDiscovery()
         btnScan.text = getString(R.string.stop_scan)
+        
+        // Show scanning progress
+        layoutScanningProgress.visibility = android.view.View.VISIBLE
+        layoutDeviceSection.visibility = android.view.View.VISIBLE
+        
         showMessage(getString(R.string.scanning_for_devices))
     }
     
@@ -351,9 +439,46 @@ class MainActivity : AppCompatActivity() {
         tvConnectionStatus.setTextColor(textColor)
         statusIndicator.background = indicatorDrawable
         
-        btnOn.isEnabled = connected
-        btnOff.isEnabled = connected
         btnScan.isEnabled = !connected
+        
+        // Enable/disable room controls
+        val roomButtons = listOf(
+            btnBedroomOn, btnBedroomOff,
+            btnLivingRoomOn, btnLivingRoomOff,
+            btnBathroomOn, btnBathroomOff,
+            btnKitchenOn, btnKitchenOff
+        )
+
+        roomButtons.forEach { button ->
+            button.isEnabled = connected
+        }
+    }
+    
+    private fun updateRoomStatus(room: String, isOn: Boolean) {
+        val status = if (isOn) "ON" else "OFF"
+        val color = if (isOn) 
+            ContextCompat.getColor(this, R.color.success_green) 
+        else 
+            ContextCompat.getColor(this, R.color.text_secondary)
+
+        when (room.lowercase()) {
+            "bedroom" -> {
+                tvBedroomStatus.text = status
+                tvBedroomStatus.setTextColor(color)
+            }
+            "livingroom" -> {
+                tvLivingRoomStatus.text = status
+                tvLivingRoomStatus.setTextColor(color)
+            }
+            "bathroom" -> {
+                tvBathroomStatus.text = status
+                tvBathroomStatus.setTextColor(color)
+            }
+            "kitchen" -> {
+                tvKitchenStatus.text = status
+                tvKitchenStatus.setTextColor(color)
+            }
+        }
     }
     
     private fun showMessage(message: String) {

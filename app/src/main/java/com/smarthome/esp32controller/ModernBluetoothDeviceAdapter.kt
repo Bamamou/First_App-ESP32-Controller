@@ -40,6 +40,13 @@ class ModernBluetoothDeviceAdapter(
 
     fun getDeviceCount(): Int = devices.size
 
+    fun updateDevices(newDevices: List<BluetoothDevice>) {
+        devices.clear()
+        devices.addAll(newDevices)
+        selectedPosition = -1
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeviceViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_bluetooth_device, parent, false)
@@ -55,8 +62,6 @@ class ModernBluetoothDeviceAdapter(
     inner class DeviceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvDeviceName: TextView = itemView.findViewById(R.id.tvDeviceName)
         private val tvDeviceAddress: TextView = itemView.findViewById(R.id.tvDeviceAddress)
-        private val tvDeviceStatus: TextView = itemView.findViewById(R.id.tvDeviceStatus)
-        private val tvDeviceType: TextView = itemView.findViewById(R.id.tvDeviceType)
         private val selectionIndicator: View = itemView.findViewById(R.id.selectionIndicator)
 
         fun bind(device: BluetoothDevice, isSelected: Boolean) {
@@ -69,25 +74,6 @@ class ModernBluetoothDeviceAdapter(
             
             tvDeviceName.text = deviceName
             tvDeviceAddress.text = device.address
-            
-            // Determine device type and status
-            when {
-                deviceName.contains("ESP32", ignoreCase = true) -> {
-                    tvDeviceType.text = "ESP32 Controller"
-                    tvDeviceStatus.text = "Compatible"
-                    tvDeviceStatus.setTextColor(itemView.context.getColor(R.color.success_green))
-                }
-                deviceName.contains("HC-", ignoreCase = true) -> {
-                    tvDeviceType.text = "Bluetooth Module"
-                    tvDeviceStatus.text = "Compatible"
-                    tvDeviceStatus.setTextColor(itemView.context.getColor(R.color.success_green))
-                }
-                else -> {
-                    tvDeviceType.text = "Unknown Device"
-                    tvDeviceStatus.text = "Unknown"
-                    tvDeviceStatus.setTextColor(itemView.context.getColor(R.color.text_hint))
-                }
-            }
 
             // Selection state
             selectionIndicator.visibility = if (isSelected) View.VISIBLE else View.INVISIBLE
